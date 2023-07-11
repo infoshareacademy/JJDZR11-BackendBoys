@@ -14,14 +14,10 @@
             integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
             crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/6a57aae0fb.js" crossorigin="anonymous"></script>
-<!--    <script>-->
-<!--        $('#myModal').on('shown.bs.modal', function () {-->
-<!--            $('#myInput').trigger('focus')-->
-<!--        })</script>-->
 </head>
 
 <section th:fragment="navbar">
-    <nav class="navbar navbar-expand-xl navbar-dark bg-dark py-2 sticky-top">
+    <nav class="navbar navbar-expand-xl navbar-dark bg-dark py-2 sticky-top navbar-fixed-top">
         <div class="container">
             <a class="navbar-brand" th:href="@{/}">
                 <i class="bi bi-search" style="font-size: 1.4rem; color: DodgerBlue ;"></i>
@@ -46,7 +42,7 @@
                         jest Zguba?</a>
                     <a class="nav-link px-lg-2" th:classappend="${content == 'allRequests'} ? 'active'"
                        th:href="@{/request/all}">Przeglądaj zguby</a>
-                    <span th:if="${loggedUserEmail}">
+                    <span th:if="${loggedUserEmail != null and loggedUserEmail != 'ADMIN@ADMIN'}">
                         <a class="nav-link px-lg-2"
                            th:classappend="${content == 'addRequest' or content == 'SubmittedRequest'} ? 'active'"
                            th:href="@{/request/add}">Dodaj zgubę</a>
@@ -61,11 +57,26 @@
                     </div>
 
                     <div th:if="${loggedUserEmail}" class="dropdown">
-                        <a class="nav-link px-lg-2"  th:classappend="${content.contains('userPanel')} ? 'active'" data-toggle="dropdown"> (<span
-                                th:text="${loggedUserEmail}"> </span>) <i class="fa-solid fa-user"></i></a></span>
+                        <a class="nav-link px-lg-2" th:classappend="${content.contains('Panel')} ? 'active'"
+                           data-toggle="dropdown">
+                            <div th:if="${loggedUserEmail == 'ADMIN@ADMIN'}">
+                                <span>ADMIN</span>
+                                <i class="bi bi-gear-fill" style="color: #f33737;"></i>
+                            </div>
+
+                            <div th:unless="${loggedUserEmail == 'ADMIN@ADMIN'}">
+                                <span th:text="${loggedUserEmail}"></span>
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                        </a>
 
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <span th:if="${loggedUserEmail != 'ADMIN@ADMIN'}">
                             <li><a class="dropdown-item" th:href="@{/user/panel}">Panel użytkownika</a></li>
+                            </span>
+                            <span th:unless="${loggedUserEmail != 'ADMIN@ADMIN'}">
+                            <li><a class="dropdown-item" th:href="@{/user/adminpanel}">Panel administratora</a></li>
+                            </span>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>

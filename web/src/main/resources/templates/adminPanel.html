@@ -1,0 +1,24 @@
+<div th:fragment="content" class="container" xmlns="http://www.w3.org/1999/html">
+    <h2 class="text-center text-strong p-4" style="color: #a81616;">PANEL ADMINISTRATORA</h2>
+
+    <div class="row text-center grid gap-4">
+        <div class="col-12 col-md-6 col-lg-4 mx-auto p-auto">
+            <a th:href="@{/user/adminpanel/accounts}" style="color:inherit">
+                <button type="button" class="admin-option-box btn btn-outline-danger border text-dark p-5, m-auto">
+                    <h3 class="p-5, m-auto">Zarządzanie kontami</h3>
+                    <i class="bi bi-people-fill admin-option-icon"></i>
+                    <p>Wejdź, aby przeglądać, edytować dane dotyczące logowania i usuwać konta użytkowników.</p>
+                </button>
+            </a>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4 mx-auto p-auto">
+            <a th:href="@{/user/panel/showUserData}" style="color:inherit">
+                <button type="button" class="admin-option-box btn btn-outline-danger border text-dark p-5, m-auto">
+                    <h3>Zarządzanie zgłoszeniami</h3>
+                    <i class="bi bi-card-list admin-option-icon"></i>
+                    <p>Wejdź, aby przeglądać i edytować zgłoszenia użytkowników.</p>
+                </button>
+            </a>
+        </div>
+    </div>
+</div>

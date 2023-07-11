@@ -10,16 +10,16 @@ import java.util.List;
 public class UserDatabase {
     private final List<User> users = new ArrayList<>(JsonService.getUsersFromJsonFile());
 
+    public List<User> getUsers() {
+        return users;
+    }
+
     public void add(User user) {
         users.add(user);
     }
 
-    public void update() {
+    public void exortToJson() {
         JsonService.updateUsersJsonFile(users);
-    }
-
-    public List<User> getUsers() {
-        return users;
     }
 
     public void deleteUser(User loggedUser) {

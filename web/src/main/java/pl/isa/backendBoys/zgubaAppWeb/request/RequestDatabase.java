@@ -8,21 +8,17 @@ import java.util.List;
 
 @Component
 public class RequestDatabase {
-    private final List<Request> allRequests = new ArrayList<>(JsonService.getRequestsfromJsonFile());
+    private final List<Request> requests = new ArrayList<>(JsonService.getRequestsfromJsonFile());
 
-    public List<Request> getAllRequests() {
-        return allRequests;
+    public List<Request> getRequests() {
+        return requests;
     }
 
     public void add(Request request) {
-        allRequests.add(request);
-    }
-
-    public void delete(Request request) {
-        allRequests.remove(request);
+        requests.add(request);
     }
 
     public void exportToJson() {
-        JsonService.updateRequestsJsonFile(allRequests);
+        JsonService.updateRequestsJsonFile(requests);
     }
 }

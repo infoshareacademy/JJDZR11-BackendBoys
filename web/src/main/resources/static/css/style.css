@@ -2,6 +2,15 @@
 body {
     font-family: "San Francisco", Arial, sans-serif;
     background-color: #f8f8ff;
+    padding-top: 56px;
+}
+
+.navbar-fixed-top
+{
+    position: fixed;
+    /*margin-bottom: 150px;*/
+    /*top: px;*/
+    width: 100%;
 }
 
 .option_box {
@@ -31,8 +40,25 @@ body {
     text-transform: uppercase;
 }
 
-
 .user-option-icon {
+    font-size: 2.5rem;
+}
+
+/* sekcja panel-panel options */
+.admin-option-box {
+    background-color: rgb(252, 198, 198);
+    height: 150px;
+    width: 460px;
+    border-radius: 30px;
+    box-shadow: 1px 1px 5px 1px rgb(86, 75, 75);
+}
+.admin-option-box h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.admin-option-icon {
     font-size: 2.5rem;
 }
 
@@ -172,4 +198,35 @@ img {
 
 .placeholder-sm::placeholder {
     font-size: 12px; /* dostosuj rozmiar czcionki według potrzeb */
+}
+
+/*zamrażanie nagłówka tabeli*/
+/*.fixed-header-table {*/
+/*    position: sticky;*/
+/*}*/
+
+/*.fixed-header-table thead {*/
+/*    position: sticky;*/
+/*    top: 70px;*/
+/*    background-color: #f8f9fa; !* Kolor tła nagłówka *!*/
+/*    !*z-index: 0;*!*/
+/*}*/
+
+.fixed-header-table-container {
+    max-height: 710px; /* Maksymalna wysokość kontenera tabeli */
+    overflow-y: auto; /* Dodaje pasek przewijania, gdy tabela przekracza maksymalną wysokość */
+}
+
+.fixed-header-table {
+    position: sticky;
+    top: 0;
+    /*background-color: #f8f9fa; !* Kolor tła nagłówka *!*/
+    z-index: 1;
+}
+
+.fixed-header-table th {
+    position: sticky;
+    top: 0px;
+    /*background-color: #f8f9fa; !* Kolor tła wierszy nagłówka *!*/
+    z-index: 2;
 }

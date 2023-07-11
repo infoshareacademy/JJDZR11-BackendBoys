@@ -2,10 +2,7 @@ package pl.isa.backendBoys.zgubaAppWeb.rest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import pl.isa.backendBoys.zgubaAppWeb.search.SearchHelp;
 import pl.isa.backendBoys.zgubaAppWeb.user.User;
 import pl.isa.backendBoys.zgubaAppWeb.user.UserDto;
@@ -198,7 +195,7 @@ public class UserController {
             userService.changeUserPassword(loggedUser, userToModify.getPassword());
         }
 
-        if ((!isLoginChanged & !isPasswordChanged)) {
+        if ((!isLoginChanged && !isPasswordChanged)) {
             model.addAttribute("showErrorNothingChange", true);
             model.addAttribute("loggedUserEmail", loggedUserEmail);
             model.addAttribute("content", "userPanel_loginData");
@@ -242,4 +239,114 @@ public class UserController {
         }
         return "main";
     }
+
+    @GetMapping("/adminpanel")
+    public String adminPanel(Model model) {
+        model.addAttribute("loggedUserEmail", userService.getLoggedUserEmail());
+        model.addAttribute("searchWord", new SearchHelp());
+        model.addAttribute("content", "adminPanel");
+        return "main";
+    }
+
+    @GetMapping("/adminpanel/accounts")
+    public String manageAccounts(Model model, @ModelAttribute User user) {
+        model.addAttribute("loggedUserEmail", userService.getLoggedUserEmail());
+        model.addAttribute("searchWord", new SearchHelp());
+        model.addAttribute("searchWordUser", new SearchHelp());
+        model.addAttribute("users", userService.getNotAdminUsers());
+        model.addAttribute("content", "adminPanel_users");
+        return "main";
+    }
+
+    @GetMapping("/adminpanel/accounts/delete/{userLoginEmail}")
+    public String deleteAccount(Model model, @PathVariable String userLoginEmail) {
+        userService.deleteUserAndRequests(userLoginEmail);
+
+        model.addAttribute("loggedUserEmail", userService.getLoggedUserEmail());
+        model.addAttribute("searchWord", new SearchHelp());
+        model.addAttribute("searchWordUser", new SearchHelp());
+        model.addAttribute("users", userService.getNotAdminUsers());
+        model.addAttribute("deletedUser", userLoginEmail);
+
+        model.addAttribute("content", "adminPanel_users");
+        return "main";
+    }
+
+    @GetMapping("/adminpanel/accounts/show/{userLoginEmail}")
+    public String adminShowLoginData(Model model, @PathVariable String userLoginEmail) {
+        User userToModify = userService.getUserByLogin(userLoginEmail);
+
+        model.addAttribute("loggedUserEmail", userService.getLoggedUserEmail());
+        model.addAttribute("userToModify", userToModify);
+        model.addAttribute("searchWord", new SearchHelp());
+        model.addAttribute("modify", false);
+        model.addAttribute("content", "adminPanel_modifyLoginData");
+        return "main";
+    }
+
+    @GetMapping("/adminpanel/accounts/modify/{userLoginEmail}")
+    public String adminChangeLoginDataGet(Model model, @PathVariable String userLoginEmail,
+                                          @ModelAttribute UserDto userToModify) {
+        String loggedUserEmail = userService.getLoggedUserEmail();
+        model.addAttribute("loggedUserEmail", loggedUserEmail);
+
+        userToModify.setLoginEmail(userLoginEmail);
+        userToModify.setPassword(userService.getUserByLogin(loggedUserEmail).getPassword());
+        //zmienilem z current
+
+        model.addAttribute("userToModify", userToModify);
+        model.addAttribute("searchWord", new SearchHelp());
+
+        model.addAttribute("modify", true);
+        model.addAttribute("content", "adminPanel_modifyLoginData");
+        return "main";
+    }
+
+    @PostMapping("/adminpanel/accounts/modify/{userLoginEmail}")
+    public String adminChangeLoginDataPost(Model model, @PathVariable String userLoginEmail,
+                                           @ModelAttribute UserDto userToModify) {
+        String loggedUserEmail = userService.getLoggedUserEmail();
+        model.addAttribute("loggedUserEmail", loggedUserEmail);
+
+        model.addAttribute("searchWord", new SearchHelp());
+        model.addAttribute("userToModify", userToModify);
+        model.addAttribute("modify", true);
+
+        userToModify.setCurrentLoginEmail(userLoginEmail);
+        userToModify.setCurrentPassword(userService.getUserByLogin(userLoginEmail).getPassword());
+
+        boolean isLoginChanged = !userToModify.getLoginEmail().equals(userToModify.getCurrentLoginEmail())
+                && userToModify.getLoginEmail() != null;
+        boolean isPasswordChanged = !userToModify.getPassword().equals(userToModify.getCurrentPassword())
+                && !userToModify.getPassword().equals("");
+        if (isLoginChanged) {
+            boolean isLoginTaken = userService.isLoginTaken(userToModify.getLoginEmail());
+            if (isLoginTaken) {
+                model.addAttribute("showErrorLogin", true);
+                model.addAttribute("content", "userPanel_loginData_modified");
+                return "main";
+            } else {
+                userService.changeUserLoginAndRequests(userLoginEmail, userToModify.getLoginEmail());
+            }
+        }
+        if (isPasswordChanged) {
+            if (isLoginChanged) {
+                userService.changeUserPassword(userService.getUserByLogin(userToModify.getLoginEmail()), userToModify.getPassword());
+            } else {
+                userService.changeUserPassword(userService.getUserByLogin(userLoginEmail), userToModify.getPassword());
+            }
+        }
+
+        if ((!isLoginChanged && !isPasswordChanged)) {
+            model.addAttribute("showErrorNothingChange", true);
+            model.addAttribute("content", "adminPanel_modifyLoginData");
+        } else {
+            model.addAttribute("showModifyUserInformation", userToModify.getLoginEmail());
+            model.addAttribute("users", userService.getNotAdminUsers());
+            model.addAttribute("content", "adminPanel_users");
+        }
+        return "main";
+    }
+
+
 }

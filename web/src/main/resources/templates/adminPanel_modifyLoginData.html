@@ -1,0 +1,105 @@
+<div th:fragment="content" class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div th:if="${modify}">
+                <h2 class="text-center" style="color: #800000;">MODYFIKOWANIE DANYCH LOGOWANIA</h2>
+            </div>
+            <div th:unless="${modify}">
+                <h2 class="text-center" style="color: #074dcf;">DANE DO LOGOWANIA</h2>
+            </div>
+
+
+            <form th:action="@{/user/adminpanel/accounts/modify/{userLoginEmail}(userLoginEmail=${userToModify.loginEmail})}"
+                  th:object="${userToModify}" method="post">
+                <div class="form-group mt-3">
+                    <label for="email">
+                        <span th:if="${modify}"><span class="text-strong">Nowy login / email</span> (pozostaw bez zmian, jeżeli nie modyfikujesz)</span>
+                        <span th:unless="${modify}">Obecny login (e-mail):</span>
+                    </label>
+
+                    <input type="email" class="form-control border-2" id="email" name="email" required
+                           th:field="*{loginEmail}" th:attr="disabled=${!modify}">
+                </div>
+
+                <div class="justify-content-center mt-2 px-2 bg-danger text-white text-center text-wrap"
+                     th:if="${showErrorLogin}">
+                    <p class="text-cemter py-2"> Wpisany login (w-mail) jest już zajęty, proszę wpisz inny.</p>
+                </div>
+
+                <div th:if="${modify}" class="form-group mt-3">
+                    <label for="Password"><span class="text-strong">Nowe hasło</span> (pozostaw puste, jeżeli nie
+                        modyfikujesz):</label>
+                    <input type="password" class="form-control border-2" id="Password" name="Password"
+                           th:field="*{password}">
+                </div>
+                <div th:unless="${modify}" class="form-group mt-3">
+                    <button type="button" class="btn btn-link ps-0 pb-0" data-toggle="modal"
+                            data-target=".bd-example-modal-sm">
+                        <label for="passwordText">Pokaż obecne hasło:</label>
+                    </button>
+                    <input type="text" class="form-control border-2" id="passwordText" name="passwordText"
+                           value="*****************" disabled>
+                </div>
+
+                <!--                <div class="form-group my-3" th:if="${modify}">-->
+                <!--                    <label for="currentPassword" class="text-danger fw-bold">W celu zatwierdzenia zmian wpisz ponownie swoje-->
+                <!--                        obecne hasło:</label>-->
+                <!--                    <input type="password" class="form-control border-2" id="currentPassword" name="currentPassword" required-->
+                <!--                           th:field="*{currentPassword}">-->
+                <!--                    <div class="justify-content-center mt-2 px-2 bg-danger text-white text-center text-wrap"-->
+                <!--                         th:if="${showErrorPassword}">-->
+                <!--                        <p class="text-cemter py-2"> Wpisane hasło jest nieprawidłowe. Spróbuj ponownie.</p>-->
+                <!--                    </div>-->
+                <!--                </div>-->
+
+                <div class="justify-content-center pt-0 bg-danger text-white text-center text-wrap"
+                     th:if="${showError}">
+                    <p class="text-cemter py-2"> Nieprawidłowe hasło. Spróbuj ponownie.</p>
+                </div>
+
+                <div class="text-end m-auto mt-4">
+                    <a th:href="@{/user/adminpanel/accounts}" style="color:inherit; text-decoration:none;">
+                        <button type="button" class="btn btn-outline-secondary mb-1">
+                            <i class="bi bi-unindent" style="font-size: 1.2rem;"></i>
+                            <span> Wróć do listy użytkowników</span>
+                        </button>
+
+                        <span th:if="${modify}">
+                        <a th:href="@{/user/adminpanel/accounts/modify/{userLoginEmail}(userLoginEmail=${userToModify.loginEmail})}"
+                           style="color:inherit">
+                            <button type="submit" class="btn btn-outline-success mb-1 py-2 p-5 ms-1"><i
+                                    class="bi bi-save2"> Zatwierdź zmiany</i>
+                            </button>
+                        </a>
+                    </span>
+                        <span th:unless="${modify}">
+                            <a th:href="@{/user/adminpanel/accounts/modify/{userLoginEmail}(userLoginEmail=${userToModify.loginEmail})}"
+                               style="color:inherit">
+                                <button type="button" class="btn btn-outline-warning mb-1 py-2 p-5 ms-1"><i
+                                        class="bi bi-pencil-square"> Edytuj dane</i>
+                                </button>
+                        </a>
+                    </span>
+                </div>
+                <div class="justify-content-center mt-2 px-2 bg-warning text-white text-center text-wrap"
+                     th:if="${showErrorNothingChange}">
+                    <p class="text-cemter py-2"> Wpisane dane nie różnią się od obecnych.</p>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+
+    <!-- Small Modal - password -->
+    <div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content" style="text-align: center;">
+                <p class="text-strong py-1">Obecne hasło</p>
+                <span class="pb-4" style="color: #800000;" th:text="*{userToModify.password}"></span>
+            </div>
+        </div>
+    </div>
+
+</div>

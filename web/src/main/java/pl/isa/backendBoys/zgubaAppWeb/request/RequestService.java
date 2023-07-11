@@ -21,25 +21,28 @@ public class RequestService {
 
     public void addRequest(Request request) {
         requestDatabase.add(request);
-        requestDatabase.exportToJson();
+        exportRequestDatabaseToJson();
     }
 
     public List<Request> getAllRequests() {
-        return requestDatabase.getAllRequests();
+        return requestDatabase.getRequests();
     }
 
     public void changeRequesterLogin(String currentLoginEmail, String newLoginEmail) {
-        requestDatabase.getAllRequests().stream()
-                .filter(request -> request.getRequesterLogin().equals(currentLoginEmail))
+        requestDatabase.getRequests().stream()
+                .filter(request -> request.getRequesterLogin()
+                        .equals(currentLoginEmail))
                 .forEach(request -> request.setRequesterLogin(newLoginEmail));
-        requestDatabase.exportToJson();
+
+        exportRequestDatabaseToJson();
+
     }
 
-    public void deleteRequestsByLogin(String loginEmail) {
+    public boolean deleteRequestsByLogin(String loginEmail) {
 
         boolean isRequestFound = false;
 
-        Iterator<Request> iterator = requestDatabase.getAllRequests().iterator();
+        Iterator<Request> iterator = requestDatabase.getRequests().iterator();
         while (iterator.hasNext()) {
             Request request = iterator.next();
             if (request.getRequesterLogin().equals(loginEmail)) {
@@ -47,15 +50,16 @@ public class RequestService {
                 isRequestFound = true;
             }
         }
-
-        if (isRequestFound) {
-            requestDatabase.exportToJson();
-        }
+        return isRequestFound;
     }
 
     public List<Request> getRequestByloginEmail(String loginEmail) {
-        return requestDatabase.getAllRequests().stream()
-                .filter(request -> request.getRequesterLogin().equals(loginEmail))
-                .collect(Collectors.toList());
+        return requestDatabase.getRequests().stream()
+                .filter(request -> request.getRequesterLogin()
+                        .equals(loginEmail)).collect(Collectors.toList());
+    }
+
+    public void exportRequestDatabaseToJson() {
+        requestDatabase.exportToJson();
     }
 }

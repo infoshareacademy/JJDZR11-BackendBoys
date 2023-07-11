@@ -1,6 +1,6 @@
 <div th:fragment="content" class="container mt-5 mb-5 ">
 
-    <div class="text-center">
+    <div class="text-center" th:if="${loggedUserEmail != 'ADMIN@ADMIN'}">
         <h2 style="color: #074dcf;">Zgłoszenia</h2>
         <span th:if="${loggedUserEmail != null}">
             <a th:href="@{/request/mineRequests}" class="btn btn-primary btn-sm py-0 mx-2"> Pokaż moje zguby </a>

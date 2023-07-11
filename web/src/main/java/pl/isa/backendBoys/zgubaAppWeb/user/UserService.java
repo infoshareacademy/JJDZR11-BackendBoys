@@ -3,6 +3,9 @@ package pl.isa.backendBoys.zgubaAppWeb.user;
 import org.springframework.stereotype.Controller;
 import pl.isa.backendBoys.zgubaAppWeb.request.RequestService;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Controller
 public class UserService {
 
@@ -13,6 +16,16 @@ public class UserService {
     public UserService(UserDatabase userDatabase, RequestService requestService) {
         this.userDatabase = userDatabase;
         this.requestService = requestService;
+    }
+
+    public List<User> getAllUsers() {
+        return userDatabase.getUsers();
+    }
+
+    public List<User> getNotAdminUsers() {
+        return userDatabase.getUsers().stream()
+                .filter(user -> !user.getLoginEmail().equals("ADMIN@ADMIN"))
+                .toList();
     }
 
     public String getLoggedUserEmail() {
@@ -44,11 +57,12 @@ public class UserService {
 
     public void registerUser(User user) {
         userDatabase.add(user);
-        userDatabase.update();
+        userDatabase.exortToJson();
     }
 
     public boolean isLoginTaken(String login) {
-        return userDatabase.getUsers().stream().anyMatch(user -> user.getLoginEmail().equals(login));
+        return userDatabase.getUsers().stream()
+                .anyMatch(user -> user.getLoginEmail().equals(login));
     }
 
     public User getUserByLogin(String login) {
@@ -62,35 +76,49 @@ public class UserService {
 
     public void changeUserName(User user, String newName) {
         user.setName(newName);
-        userDatabase.update();
+        userDatabase.exortToJson();
     }
 
     public void changeUserCity(User user, String newCity) {
         user.setCity(newCity);
-        userDatabase.update();
+        userDatabase.exortToJson();
     }
 
     public void changeUserContactNumber(User user, String newContactNumber) {
         user.setContactNumber(newContactNumber);
-        userDatabase.update();
+        userDatabase.exortToJson();
     }
 
     public void changeUserPassword(User loggedUser, String newPassword) {
         loggedUser.setPassword(newPassword);
-        userDatabase.update();
+        userDatabase.exortToJson();
     }
 
     public void changeUserLoginAndRequests(User loggedUser, String newLogin) {
         String currentLogin = loggedUser.getLoginEmail();
-        loggedUser.setLoginEmail(newLogin);
-        userDatabase.update();
+        changeUserLoginAndRequests(currentLogin, newLogin);
+    }
+
+    public void changeUserLoginAndRequests(String currentLogin, String newLogin) {
+        User currentUser = getUserByLogin(currentLogin);
+        currentUser.setLoginEmail(newLogin);
+        userDatabase.exortToJson();
         requestService.changeRequesterLogin(currentLogin, newLogin);
     }
 
-    public void deleteUserAndRequests(User loggedUser) {
-        String deletedLogin = loggedUser.getLoginEmail();
-        userDatabase.deleteUser(loggedUser);
-        userDatabase.update();
-        requestService.deleteRequestsByLogin(deletedLogin);
+    public void deleteUserAndRequests(User userToDelete) {
+        String deletedLogin = userToDelete.getLoginEmail();
+        userDatabase.deleteUser(userToDelete);
+        userDatabase.exortToJson();
+        if (requestService.deleteRequestsByLogin(deletedLogin)) {
+            requestService.exportRequestDatabaseToJson();
+        }
+    }
+
+    public void deleteUserAndRequests(String userLoginEmailToDelete) {
+        User userToDelete = getUserByLogin(userLoginEmailToDelete);
+        deleteUserAndRequests(userToDelete);
     }
 }
+
+
